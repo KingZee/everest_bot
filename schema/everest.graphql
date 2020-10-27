@@ -1,0 +1,1457 @@
+directive @entity on OBJECT
+
+directive @derivedFrom(field: String) on FIELD_DEFINITION
+
+directive @subgraphId(id: String) on OBJECT
+
+scalar BigDecimal
+
+scalar BigInt
+
+input Block_height {
+  hash: Bytes
+  number: Int
+}
+
+scalar Bytes
+
+"""
+Project Categories
+"""
+type Category {
+  """
+  The ID is a lowercased name
+  """
+  id: ID!
+
+  """
+  The category description
+  """
+  description: String!
+
+  """
+  The IPFS hash of the category image
+  """
+  imageHash: String!
+
+  """
+  The Url of the category image
+  """
+  imageUrl: String!
+
+  """
+  The name of the category, case insensitive
+  """
+  name: String!
+
+  """
+  The name used for the front end
+  """
+  slug: String!
+
+  """
+  Projects with this category designation
+  """
+  projects(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Project_orderBy
+    orderDirection: OrderDirection
+    where: Project_filter
+  ): [Project!]!
+
+  """
+  The subcategories of this Category
+  """
+  subcategories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Category_orderBy
+    orderDirection: OrderDirection
+    where: Category_filter
+  ): [Category!]
+
+  """
+  Parent category of this category. Null if it is a top level category
+  """
+  parentCategory: Category
+
+  """
+  Time it was created in the Subgraph
+  """
+  createdAt: Int!
+
+  """
+  Number of projects in this category and all of its subcategories
+  """
+  projectCount: Int!
+}
+
+input Category_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  description: String
+  description_not: String
+  description_gt: String
+  description_lt: String
+  description_gte: String
+  description_lte: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  imageHash: String
+  imageHash_not: String
+  imageHash_gt: String
+  imageHash_lt: String
+  imageHash_gte: String
+  imageHash_lte: String
+  imageHash_in: [String!]
+  imageHash_not_in: [String!]
+  imageHash_contains: String
+  imageHash_not_contains: String
+  imageHash_starts_with: String
+  imageHash_not_starts_with: String
+  imageHash_ends_with: String
+  imageHash_not_ends_with: String
+  imageUrl: String
+  imageUrl_not: String
+  imageUrl_gt: String
+  imageUrl_lt: String
+  imageUrl_gte: String
+  imageUrl_lte: String
+  imageUrl_in: [String!]
+  imageUrl_not_in: [String!]
+  imageUrl_contains: String
+  imageUrl_not_contains: String
+  imageUrl_starts_with: String
+  imageUrl_not_starts_with: String
+  imageUrl_ends_with: String
+  imageUrl_not_ends_with: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  slug: String
+  slug_not: String
+  slug_gt: String
+  slug_lt: String
+  slug_gte: String
+  slug_lte: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  projects: [String!]
+  projects_not: [String!]
+  projects_contains: [String!]
+  projects_not_contains: [String!]
+  parentCategory: String
+  parentCategory_not: String
+  parentCategory_gt: String
+  parentCategory_lt: String
+  parentCategory_gte: String
+  parentCategory_lte: String
+  parentCategory_in: [String!]
+  parentCategory_not_in: [String!]
+  parentCategory_contains: String
+  parentCategory_not_contains: String
+  parentCategory_starts_with: String
+  parentCategory_not_starts_with: String
+  parentCategory_ends_with: String
+  parentCategory_not_ends_with: String
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  createdAt_in: [Int!]
+  createdAt_not_in: [Int!]
+  projectCount: Int
+  projectCount_not: Int
+  projectCount_gt: Int
+  projectCount_lt: Int
+  projectCount_gte: Int
+  projectCount_lte: Int
+  projectCount_in: [Int!]
+  projectCount_not_in: [Int!]
+}
+
+enum Category_orderBy {
+  id
+  description
+  imageHash
+  imageUrl
+  name
+  slug
+  projects
+  subcategories
+  parentCategory
+  createdAt
+  projectCount
+}
+
+type Challenge {
+  """
+  Challenge ID
+  """
+  id: ID!
+
+  """
+  IPFS hash where the description is stored
+  """
+  ipfsHash: String!
+
+  """
+  Challenge description
+  """
+  description: String
+
+  """
+  End time of the challenge
+  """
+  endTime: Int!
+
+  """
+  Votes yes to a challenge for removal of the project (in weight)
+  """
+  removeVotes: Int!
+
+  """
+  Voting no to a challenge for keeping the project  (in weight)
+  """
+  keepVotes: Int!
+
+  """
+  Project that is being challenged
+  """
+  project: Project
+
+  """
+  Owner of the challenge, which is a project
+  """
+  owner: Project
+
+  """
+  List of all created votes
+  """
+  votes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Vote_orderBy
+    orderDirection: OrderDirection
+    where: Vote_filter
+  ): [Vote!]
+
+  """
+  True if the challenge has been resolved
+  """
+  resolved: Boolean!
+
+  """
+  Time challenge was created on the blockchain
+  """
+  createdAt: Int!
+}
+
+input Challenge_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  ipfsHash: String
+  ipfsHash_not: String
+  ipfsHash_gt: String
+  ipfsHash_lt: String
+  ipfsHash_gte: String
+  ipfsHash_lte: String
+  ipfsHash_in: [String!]
+  ipfsHash_not_in: [String!]
+  ipfsHash_contains: String
+  ipfsHash_not_contains: String
+  ipfsHash_starts_with: String
+  ipfsHash_not_starts_with: String
+  ipfsHash_ends_with: String
+  ipfsHash_not_ends_with: String
+  description: String
+  description_not: String
+  description_gt: String
+  description_lt: String
+  description_gte: String
+  description_lte: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  endTime: Int
+  endTime_not: Int
+  endTime_gt: Int
+  endTime_lt: Int
+  endTime_gte: Int
+  endTime_lte: Int
+  endTime_in: [Int!]
+  endTime_not_in: [Int!]
+  removeVotes: Int
+  removeVotes_not: Int
+  removeVotes_gt: Int
+  removeVotes_lt: Int
+  removeVotes_gte: Int
+  removeVotes_lte: Int
+  removeVotes_in: [Int!]
+  removeVotes_not_in: [Int!]
+  keepVotes: Int
+  keepVotes_not: Int
+  keepVotes_gt: Int
+  keepVotes_lt: Int
+  keepVotes_gte: Int
+  keepVotes_lte: Int
+  keepVotes_in: [Int!]
+  keepVotes_not_in: [Int!]
+  project: String
+  project_not: String
+  project_gt: String
+  project_lt: String
+  project_gte: String
+  project_lte: String
+  project_in: [String!]
+  project_not_in: [String!]
+  project_contains: String
+  project_not_contains: String
+  project_starts_with: String
+  project_not_starts_with: String
+  project_ends_with: String
+  project_not_ends_with: String
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_not_contains: String
+  owner_starts_with: String
+  owner_not_starts_with: String
+  owner_ends_with: String
+  owner_not_ends_with: String
+  resolved: Boolean
+  resolved_not: Boolean
+  resolved_in: [Boolean!]
+  resolved_not_in: [Boolean!]
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  createdAt_in: [Int!]
+  createdAt_not_in: [Int!]
+}
+
+enum Challenge_orderBy {
+  id
+  ipfsHash
+  description
+  endTime
+  removeVotes
+  keepVotes
+  project
+  owner
+  votes
+  resolved
+  createdAt
+}
+
+"""
+The Vote choice enum
+"""
+enum Choice {
+  Null
+  Yes
+  No
+}
+
+"""
+Everest holds the global variables relevant to the dapp
+"""
+type Everest {
+  id: ID!
+
+  """
+  Owner of the Everest contract
+  """
+  owner: Bytes!
+
+  """
+  Approved token for Everest fees
+  """
+  approvedToken: Bytes!
+
+  """
+  Voting period for challenges
+  """
+  votingPeriodDuration: Int!
+
+  """
+  Challege deposit in DAI
+  """
+  challengeDeposit: BigInt!
+
+  """
+  Fee to apply to be in Everest
+  """
+  applicationFee: BigInt!
+
+  """
+  Address of everest
+  """
+  everestAddress: Bytes!
+
+  """
+  Address of the reserve bank
+  """
+  reserveBankAddress: Bytes!
+
+  """
+  Balance of the reserve bank (DAI)
+  """
+  reserveBankBalance: BigInt!
+
+  """
+  IPFS hash pointing to the categories
+  """
+  categories: Bytes!
+
+  """
+  IPFS hash pointing to the charter
+  """
+  charter: Bytes!
+
+  """
+  Time it was created on the blockchain
+  """
+  createdAt: Int!
+
+  """
+  Total count of projects created on Everest
+  """
+  projectCount: Int!
+
+  """
+  Projects that are currently in control by a representative
+  """
+  claimedProjects: Int!
+
+  """
+  Projects that are currently under challenge
+  """
+  challengedProjects: Int!
+
+  """
+  The amount of categories in Everest
+  """
+  categoriesCount: Int!
+}
+
+input Everest_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  owner: Bytes
+  owner_not: Bytes
+  owner_in: [Bytes!]
+  owner_not_in: [Bytes!]
+  owner_contains: Bytes
+  owner_not_contains: Bytes
+  approvedToken: Bytes
+  approvedToken_not: Bytes
+  approvedToken_in: [Bytes!]
+  approvedToken_not_in: [Bytes!]
+  approvedToken_contains: Bytes
+  approvedToken_not_contains: Bytes
+  votingPeriodDuration: Int
+  votingPeriodDuration_not: Int
+  votingPeriodDuration_gt: Int
+  votingPeriodDuration_lt: Int
+  votingPeriodDuration_gte: Int
+  votingPeriodDuration_lte: Int
+  votingPeriodDuration_in: [Int!]
+  votingPeriodDuration_not_in: [Int!]
+  challengeDeposit: BigInt
+  challengeDeposit_not: BigInt
+  challengeDeposit_gt: BigInt
+  challengeDeposit_lt: BigInt
+  challengeDeposit_gte: BigInt
+  challengeDeposit_lte: BigInt
+  challengeDeposit_in: [BigInt!]
+  challengeDeposit_not_in: [BigInt!]
+  applicationFee: BigInt
+  applicationFee_not: BigInt
+  applicationFee_gt: BigInt
+  applicationFee_lt: BigInt
+  applicationFee_gte: BigInt
+  applicationFee_lte: BigInt
+  applicationFee_in: [BigInt!]
+  applicationFee_not_in: [BigInt!]
+  everestAddress: Bytes
+  everestAddress_not: Bytes
+  everestAddress_in: [Bytes!]
+  everestAddress_not_in: [Bytes!]
+  everestAddress_contains: Bytes
+  everestAddress_not_contains: Bytes
+  reserveBankAddress: Bytes
+  reserveBankAddress_not: Bytes
+  reserveBankAddress_in: [Bytes!]
+  reserveBankAddress_not_in: [Bytes!]
+  reserveBankAddress_contains: Bytes
+  reserveBankAddress_not_contains: Bytes
+  reserveBankBalance: BigInt
+  reserveBankBalance_not: BigInt
+  reserveBankBalance_gt: BigInt
+  reserveBankBalance_lt: BigInt
+  reserveBankBalance_gte: BigInt
+  reserveBankBalance_lte: BigInt
+  reserveBankBalance_in: [BigInt!]
+  reserveBankBalance_not_in: [BigInt!]
+  categories: Bytes
+  categories_not: Bytes
+  categories_in: [Bytes!]
+  categories_not_in: [Bytes!]
+  categories_contains: Bytes
+  categories_not_contains: Bytes
+  charter: Bytes
+  charter_not: Bytes
+  charter_in: [Bytes!]
+  charter_not_in: [Bytes!]
+  charter_contains: Bytes
+  charter_not_contains: Bytes
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  createdAt_in: [Int!]
+  createdAt_not_in: [Int!]
+  projectCount: Int
+  projectCount_not: Int
+  projectCount_gt: Int
+  projectCount_lt: Int
+  projectCount_gte: Int
+  projectCount_lte: Int
+  projectCount_in: [Int!]
+  projectCount_not_in: [Int!]
+  claimedProjects: Int
+  claimedProjects_not: Int
+  claimedProjects_gt: Int
+  claimedProjects_lt: Int
+  claimedProjects_gte: Int
+  claimedProjects_lte: Int
+  claimedProjects_in: [Int!]
+  claimedProjects_not_in: [Int!]
+  challengedProjects: Int
+  challengedProjects_not: Int
+  challengedProjects_gt: Int
+  challengedProjects_lt: Int
+  challengedProjects_gte: Int
+  challengedProjects_lte: Int
+  challengedProjects_in: [Int!]
+  challengedProjects_not_in: [Int!]
+  categoriesCount: Int
+  categoriesCount_not: Int
+  categoriesCount_gt: Int
+  categoriesCount_lt: Int
+  categoriesCount_gte: Int
+  categoriesCount_lte: Int
+  categoriesCount_in: [Int!]
+  categoriesCount_not_in: [Int!]
+}
+
+enum Everest_orderBy {
+  id
+  owner
+  approvedToken
+  votingPeriodDuration
+  challengeDeposit
+  applicationFee
+  everestAddress
+  reserveBankAddress
+  reserveBankBalance
+  categories
+  charter
+  createdAt
+  projectCount
+  claimedProjects
+  challengedProjects
+  categoriesCount
+}
+
+enum OrderDirection {
+  asc
+  desc
+}
+
+"""
+Projects are the member type which the Everest list is curated for
+"""
+type Project {
+  """
+  Required ID
+  """
+  id: ID!
+
+  """
+  The IPFS hash where all off-chain data is stored
+  """
+  ipfsHash: String
+
+  """
+  Project name
+  """
+  name: String
+
+  """
+  Project description
+  """
+  description: String
+
+  """
+  Project website
+  """
+  website: String
+
+  """
+  Project twitter handle
+  """
+  twitter: String
+
+  """
+  Project github URL
+  """
+  github: String
+
+  """
+  Project avatar
+  """
+  avatar: String
+
+  """
+  Project image
+  """
+  image: String
+
+  """
+  List of project categories
+  """
+  categories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Category_orderBy
+    orderDirection: OrderDirection
+    where: Category_filter
+  ): [Category!]!
+
+  """
+  True if a representative of the company owns this project
+  """
+  isRepresentative: Boolean!
+
+  """
+  Time it was created at on the blockchain
+  """
+  createdAt: Int!
+
+  """
+  Time it was updated at on the blockchain
+  """
+  updatedAt: Int!
+
+  """
+  Owner of this project
+  """
+  owner: User
+
+  """
+  Current challenge against this project
+  """
+  currentChallenge: Challenge
+
+  """
+  Past challenges agaisnt this project
+  """
+  pastChallenges(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Challenge_orderBy
+    orderDirection: OrderDirection
+    where: Challenge_filter
+  ): [Challenge!]
+
+  """
+  Challenges this project has created against other projects
+  """
+  createdChallenges(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Challenge_orderBy
+    orderDirection: OrderDirection
+    where: Challenge_filter
+  ): [Challenge!]
+
+  """
+  Time this project joined Everest
+  """
+  membershipStartTime: Int!
+
+  """
+  List of all delegates of this project
+  """
+  delegates(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: User_orderBy
+    orderDirection: OrderDirection
+    where: User_filter
+  ): [User!]
+
+  """
+  Total vote count
+  """
+  totalVotes: Int!
+
+  """
+  All votes a project has made
+  """
+  votes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Vote_orderBy
+    orderDirection: OrderDirection
+    where: Vote_filter
+  ): [Vote!]
+}
+
+input Project_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  ipfsHash: String
+  ipfsHash_not: String
+  ipfsHash_gt: String
+  ipfsHash_lt: String
+  ipfsHash_gte: String
+  ipfsHash_lte: String
+  ipfsHash_in: [String!]
+  ipfsHash_not_in: [String!]
+  ipfsHash_contains: String
+  ipfsHash_not_contains: String
+  ipfsHash_starts_with: String
+  ipfsHash_not_starts_with: String
+  ipfsHash_ends_with: String
+  ipfsHash_not_ends_with: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_gt: String
+  description_lt: String
+  description_gte: String
+  description_lte: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  website: String
+  website_not: String
+  website_gt: String
+  website_lt: String
+  website_gte: String
+  website_lte: String
+  website_in: [String!]
+  website_not_in: [String!]
+  website_contains: String
+  website_not_contains: String
+  website_starts_with: String
+  website_not_starts_with: String
+  website_ends_with: String
+  website_not_ends_with: String
+  twitter: String
+  twitter_not: String
+  twitter_gt: String
+  twitter_lt: String
+  twitter_gte: String
+  twitter_lte: String
+  twitter_in: [String!]
+  twitter_not_in: [String!]
+  twitter_contains: String
+  twitter_not_contains: String
+  twitter_starts_with: String
+  twitter_not_starts_with: String
+  twitter_ends_with: String
+  twitter_not_ends_with: String
+  github: String
+  github_not: String
+  github_gt: String
+  github_lt: String
+  github_gte: String
+  github_lte: String
+  github_in: [String!]
+  github_not_in: [String!]
+  github_contains: String
+  github_not_contains: String
+  github_starts_with: String
+  github_not_starts_with: String
+  github_ends_with: String
+  github_not_ends_with: String
+  avatar: String
+  avatar_not: String
+  avatar_gt: String
+  avatar_lt: String
+  avatar_gte: String
+  avatar_lte: String
+  avatar_in: [String!]
+  avatar_not_in: [String!]
+  avatar_contains: String
+  avatar_not_contains: String
+  avatar_starts_with: String
+  avatar_not_starts_with: String
+  avatar_ends_with: String
+  avatar_not_ends_with: String
+  image: String
+  image_not: String
+  image_gt: String
+  image_lt: String
+  image_gte: String
+  image_lte: String
+  image_in: [String!]
+  image_not_in: [String!]
+  image_contains: String
+  image_not_contains: String
+  image_starts_with: String
+  image_not_starts_with: String
+  image_ends_with: String
+  image_not_ends_with: String
+  categories: [String!]
+  categories_not: [String!]
+  categories_contains: [String!]
+  categories_not_contains: [String!]
+  isRepresentative: Boolean
+  isRepresentative_not: Boolean
+  isRepresentative_in: [Boolean!]
+  isRepresentative_not_in: [Boolean!]
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  createdAt_in: [Int!]
+  createdAt_not_in: [Int!]
+  updatedAt: Int
+  updatedAt_not: Int
+  updatedAt_gt: Int
+  updatedAt_lt: Int
+  updatedAt_gte: Int
+  updatedAt_lte: Int
+  updatedAt_in: [Int!]
+  updatedAt_not_in: [Int!]
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_not_contains: String
+  owner_starts_with: String
+  owner_not_starts_with: String
+  owner_ends_with: String
+  owner_not_ends_with: String
+  currentChallenge: String
+  currentChallenge_not: String
+  currentChallenge_gt: String
+  currentChallenge_lt: String
+  currentChallenge_gte: String
+  currentChallenge_lte: String
+  currentChallenge_in: [String!]
+  currentChallenge_not_in: [String!]
+  currentChallenge_contains: String
+  currentChallenge_not_contains: String
+  currentChallenge_starts_with: String
+  currentChallenge_not_starts_with: String
+  currentChallenge_ends_with: String
+  currentChallenge_not_ends_with: String
+  pastChallenges: [String!]
+  pastChallenges_not: [String!]
+  pastChallenges_contains: [String!]
+  pastChallenges_not_contains: [String!]
+  createdChallenges: [String!]
+  createdChallenges_not: [String!]
+  createdChallenges_contains: [String!]
+  createdChallenges_not_contains: [String!]
+  membershipStartTime: Int
+  membershipStartTime_not: Int
+  membershipStartTime_gt: Int
+  membershipStartTime_lt: Int
+  membershipStartTime_gte: Int
+  membershipStartTime_lte: Int
+  membershipStartTime_in: [Int!]
+  membershipStartTime_not_in: [Int!]
+  delegates: [String!]
+  delegates_not: [String!]
+  delegates_contains: [String!]
+  delegates_not_contains: [String!]
+  totalVotes: Int
+  totalVotes_not: Int
+  totalVotes_gt: Int
+  totalVotes_lt: Int
+  totalVotes_gte: Int
+  totalVotes_lte: Int
+  totalVotes_in: [Int!]
+  totalVotes_not_in: [Int!]
+}
+
+enum Project_orderBy {
+  id
+  ipfsHash
+  name
+  description
+  website
+  twitter
+  github
+  avatar
+  image
+  categories
+  isRepresentative
+  createdAt
+  updatedAt
+  owner
+  currentChallenge
+  pastChallenges
+  createdChallenges
+  membershipStartTime
+  delegates
+  totalVotes
+  votes
+}
+
+type Query {
+  project(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Project
+  projects(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Project_orderBy
+    orderDirection: OrderDirection
+    where: Project_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Project!]!
+  category(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Category
+  categories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Category_orderBy
+    orderDirection: OrderDirection
+    where: Category_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Category!]!
+  challenge(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Challenge
+  challenges(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Challenge_orderBy
+    orderDirection: OrderDirection
+    where: Challenge_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Challenge!]!
+  everest(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Everest
+  everests(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Everest_orderBy
+    orderDirection: OrderDirection
+    where: Everest_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Everest!]!
+  vote(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Vote
+  votes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Vote_orderBy
+    orderDirection: OrderDirection
+    where: Vote_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Vote!]!
+  user(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): User
+  users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: User_orderBy
+    orderDirection: OrderDirection
+    where: User_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [User!]!
+  schema(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): _Schema_
+  schemaS(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: _Schema__orderBy
+    orderDirection: OrderDirection
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [_Schema_!]!
+  projectSearch(
+    text: String!
+    first: Int = 100
+    skip: Int = 0
+    block: Block_height
+  ): [Project!]!
+}
+
+type Subscription {
+  project(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Project
+  projects(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Project_orderBy
+    orderDirection: OrderDirection
+    where: Project_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Project!]!
+  category(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Category
+  categories(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Category_orderBy
+    orderDirection: OrderDirection
+    where: Category_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Category!]!
+  challenge(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Challenge
+  challenges(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Challenge_orderBy
+    orderDirection: OrderDirection
+    where: Challenge_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Challenge!]!
+  everest(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Everest
+  everests(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Everest_orderBy
+    orderDirection: OrderDirection
+    where: Everest_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Everest!]!
+  vote(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): Vote
+  votes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Vote_orderBy
+    orderDirection: OrderDirection
+    where: Vote_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [Vote!]!
+  user(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): User
+  users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: User_orderBy
+    orderDirection: OrderDirection
+    where: User_filter
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [User!]!
+  schema(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): _Schema_
+  schemaS(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: _Schema__orderBy
+    orderDirection: OrderDirection
+
+    """
+    The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+  ): [_Schema_!]!
+}
+
+"""
+A User of the Everest Dapp. A User is the owner or delegate of Projects. User info
+is obtained from 3box
+"""
+type User {
+  """
+  User ethereum address
+  """
+  id: ID!
+
+  """
+  Projects the user owns
+  """
+  projects(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Project_orderBy
+    orderDirection: OrderDirection
+    where: Project_filter
+  ): [Project!]
+
+  """
+  Projects the user is a delegate of
+  """
+  delegatorProjects(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Project_orderBy
+    orderDirection: OrderDirection
+    where: Project_filter
+  ): [Project!]
+
+  """
+  The time the user was created in the Subgraph (not the blockchain)
+  """
+  createdAt: Int!
+}
+
+input User_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  createdAt_in: [Int!]
+  createdAt_not_in: [Int!]
+}
+
+enum User_orderBy {
+  id
+  projects
+  delegatorProjects
+  createdAt
+}
+
+"""
+A challenge vote
+"""
+type Vote {
+  """
+  Concatenation of challenge ID and voter address
+  """
+  id: ID!
+
+  """
+  Project that voted on the challenge
+  """
+  voter: Project
+
+  """
+  Challenge the vote is for
+  """
+  challenge: Challenge!
+
+  """
+  Vote choice
+  """
+  choice: Choice!
+
+  """
+  Vote weight based on project reputation
+  """
+  weight: Int!
+
+  """
+  Time that vote was created on the blockchain
+  """
+  createdAt: Int!
+}
+
+input Vote_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  voter: String
+  voter_not: String
+  voter_gt: String
+  voter_lt: String
+  voter_gte: String
+  voter_lte: String
+  voter_in: [String!]
+  voter_not_in: [String!]
+  voter_contains: String
+  voter_not_contains: String
+  voter_starts_with: String
+  voter_not_starts_with: String
+  voter_ends_with: String
+  voter_not_ends_with: String
+  challenge: String
+  challenge_not: String
+  challenge_gt: String
+  challenge_lt: String
+  challenge_gte: String
+  challenge_lte: String
+  challenge_in: [String!]
+  challenge_not_in: [String!]
+  challenge_contains: String
+  challenge_not_contains: String
+  challenge_starts_with: String
+  challenge_not_starts_with: String
+  challenge_ends_with: String
+  challenge_not_ends_with: String
+  choice: Choice
+  choice_not: Choice
+  weight: Int
+  weight_not: Int
+  weight_gt: Int
+  weight_lt: Int
+  weight_gte: Int
+  weight_lte: Int
+  weight_in: [Int!]
+  weight_not_in: [Int!]
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  createdAt_in: [Int!]
+  createdAt_not_in: [Int!]
+}
+
+enum Vote_orderBy {
+  id
+  voter
+  challenge
+  choice
+  weight
+  createdAt
+}
+
+type _Schema_
+
+enum _Schema__orderBy
